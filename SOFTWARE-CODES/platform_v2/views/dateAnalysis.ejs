@@ -1,0 +1,156 @@
+<!DOCTYPE HTML>
+<html>
+
+<head>
+  <title> Date to Date</title>
+  <% include partials/header %>
+    <script>
+      // Date picker for inputing starting and ending date in the date to date analysis
+      $(function() {
+        var bindDatePicker = function() {
+          $(".date").datetimepicker({
+            format: 'YYYY-MM-DD',
+            icons: {
+              time: "fa fa-clock-o",
+              date: "fa fa-calendar",
+              up: "fa fa-arrow-up",
+              down: "fa fa-arrow-down"
+            }
+          }).find('input:first').on("blur", function() {
+            // check if the date is correct. We can accept dd-mm-yyyy and yyyy-mm-dd.
+            // update the format if it's yyyy-mm-dd
+            var date = parseDate($(this).val());
+
+            if (!isValidDate(date)) {
+              //create date based on momentjs (we have that)
+              date = moment().format('YYYY-MM-DD');
+            }
+
+            $(this).val(date);
+          });
+        }
+
+        var isValidDate = function(value, format) {
+          format = format || false;
+          // lets parse the date to the best of our knowledge
+          if (format) {
+            value = parseDate(value);
+          }
+
+          var timestamp = Date.parse(value);
+
+          return isNaN(timestamp) == false;
+        }
+
+        var parseDate = function(value) {
+          var m = value.match(/^(\d{1,2})(\/|-)?(\d{1,2})(\/|-)?(\d{4})$/);
+          if (m)
+            value = m[5] + '-' + ("00" + m[3]).slice(-2) + '-' + ("00" + m[1]).slice(-2);
+          return value;
+        }
+
+        bindDatePicker();
+      });
+    </script>
+
+</head>
+
+<body>
+  <div id="wrapper">
+    <center>
+      <h1><%=device_name%></h1></center>
+    <% include partials/nav %>
+      <div id="page-wrapper">
+
+        <div class="container-fluid">
+
+          <!-- Page Heading -->
+          <div class="row">
+            <div class="col-lg-12">
+              <h1 class="page-header">
+                            Date to Date Analysis <small>Enter start and End Date</small>
+                        </h1>
+            </div>
+
+          </div>
+
+          <div class="container">
+            <div class="row">
+              <h3 class="col-sm-3">Start Date:</h3>
+              <h3 class="col-sm-3">End Date:</h3>
+            </div>
+            <br />
+            <!--Date pickers enclosed inside a form-->
+            <!-- This form is submitted to the /dategraph route which creates a json array of data from the starting and
+            ending date submitted-->
+            <form action="/dateGraph" method="post">
+              <div class="row">
+                <div class='col-sm-3'>
+                  <div class="form-group">
+                    <div class='input-group date' id='datetimepicker1'>
+                      <input type='text' class="form-control" name="startDate" />
+                      <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <div class='col-sm-3 text-right'>
+                  <div class="form-group">
+                    <div class='input-group date' id='datetimepicker1'>
+                      <input type='text' class="form-control" name="endDate" />
+                      <span class="input-group-addon"><span class="glyphicon glyphicon-calendar"></span>
+                      </span>
+                    </div>
+                  </div>
+                </div>
+                <!-- Hidden form element to pass the device_id to the route on the basis of which the database is searched
+                and data array created-->
+                <input type="hidden" name="device_id" value="<%=device_id%>" />
+                <div class='col-sm-3 '>
+                  <input type='submit' class="form-control" value="See Analysis" />
+                </div>
+              </div>
+            </form>
+          </div>
+          <!-- div element for the morris line chart-->
+          <div id="morris-line-chart"></div>
+        </div>
+      </div>
+      <script src="/js/plugins/morris/raphael.min.js"></script>
+      <script src="/js/plugins/morris/morris.min.js"></script>
+      <script>
+        // Stringify the json array
+        var data;
+        if (data != []) {
+          data = <%- JSON.stringify(data) %>;
+        } else {
+          data = [{
+            time: new Date().valueOf(),
+            value: 0
+          }];
+        }
+
+        // creating the morris line chart
+        var lineGraph = new Morris.Line({
+          // ID of the element in which to draw the chart.
+          element: 'morris-line-chart',
+          // Chart data records -- each entry in this array corresponds to a point on
+          // the chart.
+          data: data,
+          // The name of the data record attribute that contains x-values.
+          xkey: 'time',
+          // A list of names of data record attributes that contain y-values.
+          ykeys: ['value'],
+          // Labels for the ykeys -- will be displayed when you hover over the
+          // chart.
+          redraw: true,
+          resize: true,
+          labels: ['Label']
+
+
+        });
+      </script>
+
+</body>
+
+</html>

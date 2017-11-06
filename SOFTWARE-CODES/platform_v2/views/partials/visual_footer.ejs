@@ -1,0 +1,133 @@
+<script>
+
+
+//Script for creating the round slider
+
+$("#arc-slider").roundSlider({
+sliderType: "min-range",
+circleShape: "half-top",
+value: ("<%=intensity%>"==="")?0:"<%=intensity%>",
+startAngle: 45,
+editableTooltip: true,
+radius: 100,
+width: 6,
+handleSize: "+20",
+tooltipFormat: function (args) {
+  intensity=args.value;
+  //If device is 'on' and the intensity is changed then send it via a socket and publish with topic 'state'(in app.js)
+  // Thus device intensity can be changed with the slider in 'on' state
+   document.getElementById("intensity").value=intensity;
+   socket.emit('switch', {
+     "device_id": device_id,
+     "state": state,
+     "intensity":intensity
+   });
+   return args.value + " %";
+}
+});
+
+intensity=document.getElementById("intensity").value;
+function myfunc(value) {
+console.log("switch",intensity);
+state = value.checked;
+  socket.emit('switch', {
+    "device_id": device_id,
+    "state": value.checked,
+    "intensity":intensity
+  });
+}
+
+</script>
+
+
+
+
+<script>
+  var x;
+  // The 'timer' variable acts as a flag which indicates whether the timer s switched on or no
+  // timer==true means timer is set
+  //This script is executed when the timer is set and the user navigates to some other page and visits the 'visual'
+  //page again. This ensures that the timer goes on even if user navigates to some other page or refreshes the page.
+  if (timer == "true") {
+    console.log("<%= timerDate %>");
+    var am = "<%= timerDate %>";
+    var date = set24Hrs("<%= timerDate %>");
+
+    console.log("Set", date);
+    var countDownDate = new Date(date);
+    /*if (am.slice(-2) === "AM"){
+    countDownDate.setHours(countDownDate.getHours()+24);
+  }*/
+    countDownDate=countDownDate.getTime();
+    // Update the count down every 1 second
+    x = setInterval(function() {
+
+      // Get todays date and time
+      var now = new Date().getTime();
+
+      // Find the distance between now an the count down date
+      var distance = countDownDate - now;
+
+      // Time calculations for days, hours, minutes and seconds
+      var days = Math.floor(distance / (1000 * 60 * 60 * 24));
+      var hours = Math.floor((distance % (1000 * 60 * 60 * 24)) / (1000 * 60 * 60));
+      var minutes = Math.floor((distance % (1000 * 60 * 60)) / (1000 * 60));
+      var seconds = Math.floor((distance % (1000 * 60)) / 1000);
+
+      // Display the result in the element with id="demo"
+      document.getElementById("demo").innerHTML = days + "d " + hours + "h " +
+        minutes + "m " + seconds + "s ";
+
+      // If the count down is finished, write some text
+      if (distance < 0) {
+        clearInterval(x);
+        document.getElementById("demo").innerHTML = "EXPIRED";
+      }
+    }, 1000);
+  } else {
+    console.log("in else");
+    clearInterval(x);
+  }
+  if (timer == "true") {
+    //flag = 1;
+    var date = set24Hrs("<%=timerDate%>");
+    var milli = new Date(date).getTime();
+    var now = new Date().getTime();
+    if (milli > now)
+      milli = milli - now;
+    else {
+      milli = now - milli;
+    }
+    milli = milli / 1000;
+    console.log(milli);
+    var state = "<%=state%>";
+    if (state == "true") {
+      state = "false";
+    } else {
+      state = "true";
+    }
+    console.log("intensity",intensity);
+    //device, the state of the device is stored in the database so that the next time the user logs in it shows the last state
+    //Socket emits device_id,state,time,intensity etc.
+    // time is the time interval after which device state has to be changed
+    socket.emit('timer', {
+      "device_id": device_id,
+      "state": state,
+      "time": milli,
+      "intensity":intensity
+    });
+  }
+  //Separate flag is used to emit the 'kill timer' message when the 'Timer Off' button is pressed
+  //Sends state="k" which is then published in app.js
+  //It immediately kills the timer on the front end and the device side.
+  else if("<%= flag %>"==="1"){
+    console.log("timer Off pubished");
+    socket.emit('timer', {
+      "device_id": device_id,
+      "state": "k",
+      "time": -1,
+      "intensity":-1
+    });
+
+  }
+</script>

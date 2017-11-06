@@ -1,0 +1,95 @@
+<script type="text/javascript">
+  var intensity;//Set as global variable
+  var status = "disconnected";
+//The payload sent by the device is then parsed to extract intensity of the device
+// This is used to set the intensity slider to the initial intensity of the device
+  var socket = io.connect('http://192.168.43.198:3000');
+  socket.on('mqtt', function(msg) {
+    msg.topic = String(msg.topic);
+    msg.payload = String(msg.payload);
+    console.log(msg.topic + ' ' + msg.payload);
+    var m = msg.payload;
+    m = String(m);
+    var r = m.split("@");
+    // Set the intensity only if the device state is not 'CN'(short for connected)
+    if(r[0]=='AO'||r[0]=='ON'||r[0]=="AF"||r[0]=="OF"){
+    intensity = r[1];
+  }
+  else if(r[0]=='CN'){
+    status = "Connected";
+  }
+
+  });
+  //This socket emits the topic for subscribing to the notifications sent by the device
+  //This is used in app.js where the topic used is device_id/notify for subscribing
+  //Thus topic is unique for each device
+  socket.emit('subscribe', {
+    topic: '<%=device_id%>/notify'
+  });
+  socket.emit('subscribe', {
+    topic: '<%=device_id%>/values'
+  });
+  socket.emit('subscribe', {
+    topic: '<%=device_id%>/energy'
+  });
+
+
+</script>
+
+
+<script>
+//On pressing the ON/OFF switch device_id,state(Whether to switch on or off the device) and the intensity
+//to which device has to be set is emitted through a socket.
+//The values emitted through the socket are then used in app.js to publish to the device
+//The published payload has the following format:'t/f intensity'
+//'t' signifies that the device has to be switched on
+//'f' signifies that the device has to be switched off
+//On the device side,just subscribr to the topic 'device_id/state' and parse the payload for state and intensity
+  var device_id = "<%= device_id %>";
+  var device_name = "<%= device_name%>";
+  var socket = io.connect('http://192.168.43.198:3000');
+  var timer = "<%= timer %>";
+  var state = <%= state %>;
+// The function myfunc is called when the switch is pressed
+//The function contains the required socket.
+
+
+
+
+// Converts date to 24 hour format
+  function set24Hrs(d) {
+
+    if (d.slice(-2) === "PM") {
+      var hrs = parseInt(d.slice(-8, -6))
+      var mins = d.slice(-5, -3)
+      if (hrs != 12) {
+        hrs = hrs + 12
+      }
+      var dd = d.slice(0, 10) + " " + hrs + ":" + mins;
+      return dd;
+    } else if (d.slice(-2) === "AM") {
+      return (d.slice(0, 16));
+    } else {
+      throw ("UNRECOGNIZED_FORMAT", "set24Hrs() Received Unrecognized Formatted String");
+    }
+  }
+</script>
+
+<script>
+  var device_id = "<%= device_id %>";
+</script>
+
+<script>
+
+//The function linkForm is executed when the link 'Date to Date Analysis is clicked'
+//Creates a hidden form which passes the device_id to the '/dateAnalysis' routes
+//'/dateAnalysis' route renders the 'dateAnalysis.ejs' page
+function linkForm(device_id) {
+  var url = '/dateAnalysis';
+  var form = $('<form action="' + url + '" method="post">' +
+    '<input type="hidden" name="device_id" value="' + device_id + '" />' +
+    '</form>');
+  $('body').append(form);
+  form.submit();
+}
+</script>

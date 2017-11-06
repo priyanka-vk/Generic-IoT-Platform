@@ -1,0 +1,37 @@
+{
+  "name": "platform",
+  "version": "1.0.0",
+  "description": "",
+  "main": "app.js",
+  "start": "app.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "author": "",
+  "license": "ISC",
+  "dependencies": {
+    "bcrypt-nodejs": "0.0.3",
+    "body-parser": "^1.17.2",
+    "canvas-gauges": "^2.1.4",
+    "chart.js": "^2.5.0",
+    "chartjs": "^0.3.24",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "cookieparser": "^0.1.0",
+    "ejs": "^2.5.6",
+    "email-verification": "^0.4.6",
+    "epoch-charting": "^0.8.4",
+    "express": "^4.15.2",
+    "express-session": "^1.15.2",
+    "format": "^0.2.2",
+    "logger": "0.0.1",
+    "mongoose": "^4.9.8",
+    "morgan": "^1.8.1",
+    "mqtt": "^2.8.2",
+    "nodemailer": "^4.0.1",
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+    "sleep": "^5.1.1",
+    "socket.io": "^2.0.1"
+  }
+}

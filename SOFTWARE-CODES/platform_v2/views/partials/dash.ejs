@@ -1,0 +1,72 @@
+<!-- The starting page of a user account-->
+
+<div id="page-wrapper">
+
+  <div class="container-fluid">
+      <div class="col-lg-12">
+        <!-- Page heading-->
+        <h1 class="page-header">
+                     <center>GENERIC IoT PLATFORM</center>
+                </h1>
+        <div class="page-header text-center">
+          <h1 class="font1"><span class="fa fa-anchor"></span> Welcome <%= user.local.email %></h1>
+        </div>
+      </div>
+    </div>
+
+    <div class="page-header row" style="font-family: 'Signika', sans-serif;" >
+      <div class="col-lg-2" >
+      </div>
+      <div class="col-lg-4">
+        <div class="card" style="width: 20rem;">
+          <div class="card-block">
+            <div class="row">
+              <center><h1 ><b> <%=devices%></b> </h1></center>
+            </div>
+            <% if(devices=="1"){%>
+            <div class="row">
+              <center><h2 > DEVICE </h2></center>
+            </div>
+            <% } else{%>
+              <div class="row">
+                <center><h2 > DEVICES </h2></center>
+              </div>
+              <% }%>
+          </div>
+        </div>
+      </div>
+
+      <div class="col-lg-4">
+        <div class="card" style="width: 20rem;">
+          <div class="card-block">
+            <!-- Displays the number of devices and projects added by the user-->
+            <div class="row">
+              <center><h1 ><b> <%=projects%></b> </h1></center>
+            </div>
+            <% if(projects==1){%>
+            <div class="row">
+              <center><h2> PROJECT </h2></center>
+            </div>
+            <%} else{%>
+              <div class="row">
+                <center><h2> PROJECTS </h2></center>
+              </div>
+              <% }%>
+          </div>
+        </div>
+      </div>
+
+    </div>
+    <script>
+    // Script for randomly changing the colors of the cards displaying the number of devices and projects
+    function x() {
+      var d = document.getElementsByClassName("card");
+      for (var i = 0; i < d.length; i++) {
+        var num = Math.floor(Math.random() * (colors.length - 1));
+        d[i].style.backgroundColor = colors[num];
+      }
+    }
+      x();
+    </script>
+  </div>
+</div>

@@ -1,0 +1,28 @@
+<div class="container">
+<!-- Trigger the modal with a button -->
+<button type="button" class="btn btn-danger" id="myBtn2"><i class="fa fa-trash-o"></i>&nbsp;&nbsp;Delete Device</button>
+
+<!-- Modal -->
+<div class="modal fade" id="myModal2" role="dialog">
+  <div class="modal-dialog">
+
+    <!-- Modal content-->
+    <!-- Modal for confirming deletion of  a device-->
+    <div class="modal-content">
+      <div class="modal-header" style="padding:25px 50px;">
+        <button type="button" class="close" data-dismiss="modal">&times;</button>
+        <h4><span class="glyphicon glyphicon-lock"></span>Are you sure you want to delete the device?</h4>
+      </div>
+      <div class="modal-body" style="padding:20px 50px;">
+        <!-- Submit the form to the '/deleteDevice' route-->
+        <form role="form" action="/deleteDevice" method="post">
+            <input type="hidden" name="device_id" value="<%=device.device_id%>"/>
+            <button type="submit" class="btn btn-danger btn-default"><span class="glyphicon glyphicon-trash"></span>&nbsp;Yes,delete the device</button>
+        </form>
+      </div>
+      </div>
+
+
+  </div>
+</div>
+</div>

@@ -1,0 +1,87 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+	<% include partials/header %>
+
+		<script>
+			var project_id = "<%= project_id %>";
+		</script>
+		<script src="//cdn.rawgit.com/Mikhus/canvas-gauges/gh-pages/download/2.1.4/radial/gauge.min.js"></script>
+		<script type="text/javascript" src="/colors.js"></script>
+		<script type="text/javascript" src="/myfunction.js"></script>
+		<script>
+			// Script for the modal form
+			$(document).ready(function() {
+				$("#myBtn4").click(function() {
+					$("#myModal4").modal();
+				});
+				$("#myBtn2").click(function() {
+					$("#myModal2").modal();
+				});
+			});
+		</script>
+		
+</head>
+
+<body>
+
+	<div id="wrapper">
+		<h1> <%= project_name %></h1>
+		<% include partials/DeviceButton2 %>
+			<!-- Iterate through the devices array and display all the devices of the particular device-->
+			<div class="row">
+				<% j=0 %>
+					<% devices.forEach(function(device){ j++; %>
+
+						<div class="col-sm-4">
+							<div class="panel">
+								<div class="panel-heading clearfix">
+									<h3 class="panel-title"><b><%= device.device_name %></b></h3>
+									<div class="btn-group pull-right">
+										<!-- Button to copy device_id(makes it easy to add device_id in the hardware code)-->
+										<button display="inline" class="btn btn-default" onclick="copyToClipboard('#<%= j %>m')"><i class="fa fa-copy"></i>&nbsp;&nbsp;Copy Device ID</button>
+										<% include partials/modal%>
+									</div>
+
+								</div>
+								<div class="panel-body" onclick='myfunction("<%= device.device_id %>","<%= device.device_name %>","<%= device.device_type %>","<%= device.description %>")'>
+									<p id="<%= j %>m">
+										<%= device.device_id %>
+									</p>
+									<h4><%= device.device_type %></h4>
+									<small id="<%= j %>"></small>
+									<script>
+										var x = get_time_diff("<%= device.last_access %>");
+										console.log(x);
+										document.getElementById("<%=j%>").innerHTML = x;
+									</script>
+								</div>
+							</div>
+						</div>
+
+
+						<% }) %>
+			</div>
+
+			<script>
+				// get the time difference between the last access time and current time
+				// Shows when the device was created with respect to current time
+				function x() {
+					var d = document.getElementsByClassName("panel");
+					for (var i = 0; i < <%= j %>; i++) {
+						var num = Math.floor(Math.random() * (colors.length - 1));
+						d[i].style.backgroundColor = colors[num];
+					}
+				}
+
+				x();
+			</script>
+
+			<!-- Navigation -->
+			<% include partials/nav %>
+				<% include partials/footer %>
+	</div>
+</body>
+
+</html>
